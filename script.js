@@ -131,6 +131,37 @@ async function initIndexedDB() {
 }
 
 /**
+ * IndexedDB にファイルハンドル情報を保存
+ */
+async function saveFileHandleToIndexedDB(filename, directoryHandle) {
+  if (!dbInstance) return;
+  
+  return new Promise((resolve, reject) => {
+    const transaction = dbInstance.transaction(['files'], 'readwrite');
+    const store = transaction.objectStore('files');
+    
+    const data = {
+      id: 'lastFile',
+      filename: filename,
+      directoryHandle: directoryHandle,
+      timestamp: new Date().getTime()
+    };
+    
+    const request = store.put(data);
+    
+    request.onerror = () => {
+      console.error('Failed to save file handle to IndexedDB');
+      reject(request.error);
+    };
+    
+    request.onsuccess = () => {
+      console.log('File handle saved to IndexedDB:', filename);
+      resolve();
+    };
+  });
+}
+
+/**
  * IndexedDB にファイルを保存
  */
 async function saveToIndexedDB(filename, content) {
@@ -758,6 +789,20 @@ function setupOpenButton() {
         currentFileHandle = fileHandle;
         currentFilename = fileHandle.name;
         
+        // 親ディレクトリハンドルを取得して保存
+        let directoryHandle = null;
+        try {
+          // 親ディレクトリのハンドルを取得（すべてのブラウザで成功するわけではない）
+          directoryHandle = await fileHandle.getParent?.();
+          if (directoryHandle) {
+            console.log('Parent directory handle obtained');
+            // ディレクトリハンドルを IndexedDB に保存
+            await saveFileHandleToIndexedDB(currentFilename, directoryHandle);
+          }
+        } catch (error) {
+          console.warn('Could not get parent directory handle:', error);
+        }
+        
         // ファイルを読む
         const file = await fileHandle.getFile();
         const text = await file.text();
@@ -915,8 +960,13 @@ function setupSaveButton() {
     // ファイルハンドルがある場合は直接上書き
     if (currentFileHandle) {
       try {
+        console.log('Attempting to save with File System API...');
+        console.log('Current file handle:', currentFileHandle);
+        console.log('Current filename:', currentFilename);
+        
         // ファイルに書き込み権限を要求
         const writable = await currentFileHandle.createWritable();
+        console.log('Writable stream created successfully');
         
         // ファイル内容をクリアして新しい内容を書き込み
         await writable.truncate(0);
@@ -930,6 +980,8 @@ function setupSaveButton() {
         alert('ファイルを保存しました: ' + currentFilename + '\n\n※ 元のファイルが上書きされました');
       } catch (error) {
         console.error('Failed to save file with File System API:', error);
+        console.error('Error name:', error.name);
+        console.error('Error message:', error.message);
         
         // フォールバック：ダウンロード
         const filename = currentFilename || `tasks_${currentDate}.yaml`;
@@ -940,9 +992,10 @@ function setupSaveButton() {
           await saveToIndexedDB(currentFilename, yamlContent);
         }
         
-        alert('ファイル保存がエラーになったため、ダウンロードしました: ' + filename);
+        alert('ファイル保存がエラーになったため、ダウンロードしました: ' + filename + '\n\nエラー: ' + error.message);
       }
     } else {
+      console.log('No file handle available, using download fallback');
       // File System API が使えない場合はダウンロード
       const filename = currentFilename || `tasks_${currentDate}.yaml`;
       downloadFile(yamlContent, filename);
@@ -1036,6 +1089,22 @@ async function initApp() {
       // データを置き換え
       allTasksData = loadedData;
       currentFilename = savedFile.filename;
+      
+      // ディレクトリハンドルがあればファイルハンドルを復元
+      if (savedFile.directoryHandle && 'getFileHandle' in savedFile.directoryHandle) {
+        try {
+          console.log('Attempting to restore file handle from directory handle...');
+          currentFileHandle = await savedFile.directoryHandle.getFileHandle(currentFilename);
+          console.log('File handle successfully restored:', currentFilename);
+        } catch (error) {
+          console.warn('Could not restore file handle:', error);
+          console.log('Using download fallback for Save');
+          currentFileHandle = null;
+        }
+      } else {
+        console.log('No directory handle available, using download fallback for Save');
+        currentFileHandle = null;
+      }
       
       // ロードしたデータから最初の日付を選択
       const dates = Object.keys(allTasksData).sort();
