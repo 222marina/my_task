@@ -64,38 +64,7 @@
 
         <!-- タスクリスト -->
         <section class="task-panel">
-          <div class="task-group">
-            <h3 class="task-group-title">prev</h3>
-
-            <div class="task-card status-done">
-              <div class="task-bar"></div>
-              <div class="task-body">
-                <div class="task-title">BI更新ツール変更</div>
-                <div
-                  class="task-detail"
-                  contenteditable="true"
-                  oninput="onDetailEdit(0, this.innerText)">
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="task-group">
-            <h3 class="task-group-title">today</h3>
-
-            <div class="task-card status-todo">
-              <div class="task-bar"></div>
-              <div class="task-body">
-                <div class="task-title">コイル棚卸し状況確認</div>
-                <div class="task-detail" contenteditable="true"></div>
-
-                <div class="task-actions">
-                  <button class="btn-carry">Carry</button>
-                  <button class="btn-done">Done</button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <!-- JS で動的に生成されます -->
         </section>
 
         <!-- 入力エリア -->
@@ -128,5 +97,6 @@
       </section>
     </main>
   </div>
+  <script src="script.js"></script>
 </body>
 </html>
