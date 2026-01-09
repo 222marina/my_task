@@ -2,252 +2,131 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>Task Log</title>
+  <title>業務タスク管理</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- js-yaml -->
-  <script src="https://cdn.jsdelivr.net/npm/js-yaml@4/dist/js-yaml.min.js"></script>
-
-  <style>
-    :root {
-      --bg-main: #f5f6f8;
-      --bg-panel: #ffffff;
-      --bg-subtle: #f0f1f3;
-      --text-main: #1f2937;
-      --text-sub: #6b7280;
-      --accent: #2563eb;
-      --shadow: 0 2px 6px rgba(0,0,0,0.06);
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-main: #0f172a;
-        --bg-panel: #020617;
-        --bg-subtle: #020617;
-        --text-main: #e5e7eb;
-        --text-sub: #9ca3af;
-        --accent: #3b82f6;
-        --shadow: 0 2px 8px rgba(0,0,0,0.4);
-      }
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--bg-main);
-      color: var(--text-main);
-      display: flex;
-      height: 100vh;
-    }
-
-    /* ===== Layout ===== */
-
-    .sidebar {
-      width: 220px;
-      background: var(--bg-panel);
-      box-shadow: var(--shadow);
-      display: flex;
-      flex-direction: column;
-      padding: 16px;
-    }
-
-    .sidebar h1 {
-      font-size: 16px;
-      margin-bottom: 24px;
-      color: var(--text-sub);
-    }
-
-    .tab {
-      padding: 10px 12px;
-      border-radius: 8px;
-      margin-bottom: 6px;
-      cursor: pointer;
-      color: var(--text-main);
-    }
-
-    .tab.active {
-      background: var(--bg-subtle);
-      font-weight: 600;
-    }
-
-    .sidebar-footer {
-      margin-top: auto;
-    }
-
-    .save-button {
-      width: 100%;
-      padding: 10px;
-      border: none;
-      border-radius: 8px;
-      background: var(--accent);
-      color: white;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: var(--shadow);
-    }
-
-    .main {
-      flex: 1;
-      padding: 24px;
-      overflow-y: auto;
-    }
-
-    .panel {
-      background: var(--bg-panel);
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: var(--shadow);
-      margin-bottom: 24px;
-    }
-
-    .panel h2 {
-      margin-top: 0;
-      font-size: 18px;
-    }
-
-    /* ===== Task ===== */
-
-    .task {
-      padding: 12px;
-      border-radius: 10px;
-      background: var(--bg-subtle);
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .task input[type="checkbox"] {
-      transform: scale(1.2);
-    }
-
-    .task-title {
-      font-weight: 500;
-    }
-
-    .task-detail {
-      font-size: 13px;
-      color: var(--text-sub);
-    }
-
-    /* ===== Responsive ===== */
-
-    @media (max-width: 768px) {
-      .sidebar {
-        width: 64px;
-        padding: 8px;
-      }
-
-      .sidebar h1 {
-        display: none;
-      }
-
-      .tab {
-        text-align: center;
-        padding: 12px 0;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div class="app-root">
+    <!-- サイドメニュー -->
+    <aside class="sidebar">
+      <h1 class="app-title">Task Log</h1>
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <h1>Task Log</h1>
+      <nav class="nav">
+        <button class="nav-item is-active" data-tab="today">Today</button>
+        <button class="nav-item" data-tab="calendar">Calendar</button>
+        <button class="nav-item" data-tab="history">History</button>
+        <button class="nav-item" data-tab="settings">Settings</button>
+      </nav>
+    </aside>
 
-    <div class="tab active" data-tab="today">Today</div>
-    <div class="tab" data-tab="calendar">Calendar</div>
-    <div class="tab" data-tab="history">History</div>
-    <div class="tab" data-tab="settings">Settings</div>
-
-    <div class="sidebar-footer">
-      <button class="save-button" onclick="saveYaml()">Save</button>
-    </div>
-  </aside>
-
-  <!-- Main -->
-  <main class="main">
-    <!-- Today -->
-    <section class="panel" id="today">
-      <h2>Today</h2>
-
-      <div class="task">
-        <input type="checkbox" />
-        <div>
-          <div class="task-title">コイル棚卸し状況確認</div>
-          <div class="task-detail">不明な重量エラーの調査</div>
+    <!-- メインコンテンツ -->
+    <main class="main">
+      <header class="main-header">
+        <div class="header-left">
+          <h2 class="view-title">Today</h2>
         </div>
-      </div>
+        <div class="header-right">
+          <button class="save-button">Save</button>
+        </div>
+      </header>
 
-      <div class="panel" style="margin-top:16px;">
-        <h2>新規タスク追加</h2>
-        <input type="text" placeholder="タスク名" style="width:100%;padding:10px;border-radius:8px;border:none;background:var(--bg-subtle);" />
-      </div>
-    </section>
+      <!-- Today -->
+      <section class="view view-today is-visible">
+        <!-- カレンダー -->
+        <section class="calendar-panel">
+          <div class="calendar-header">
+            <span class="calendar-month">2026-01</span>
+          </div>
 
-    <!-- Calendar -->
-    <section class="panel" id="calendar" style="display:none;">
-      <h2>Calendar</h2>
-      <p>月表示カレンダー（今後実装）</p>
-    </section>
+          <table class="calendar-table">
+            <thead>
+              <tr>
+                <th>Mon</th><th>Tue</th><th>Wed</th>
+                <th>Thu</th><th>Fri</th>
+                <th>Sat</th><th>Sun</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- JS で生成 -->
+              <tr>
+                <td class="is-today">12</td>
+                <td>13</td>
+                <td>14</td>
+                <td>15</td>
+                <td>16</td>
+                <td class="is-weekend">17</td>
+                <td class="is-weekend">18</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
 
-    <!-- History -->
-    <section class="panel" id="history" style="display:none;">
-      <h2>History</h2>
-      <p>過去の prev / today を一覧表示（読み取り専用）</p>
-    </section>
+        <!-- タスクリスト -->
+        <section class="task-panel">
+          <div class="task-group">
+            <h3 class="task-group-title">prev</h3>
 
-    <!-- Settings -->
-    <section class="panel" id="settings" style="display:none;">
-      <h2>Settings</h2>
-      <p>表示設定・ダークモード</p>
-    </section>
-  </main>
+            <div class="task-card status-done">
+              <div class="task-bar"></div>
+              <div class="task-body">
+                <div class="task-title">BI更新ツール変更</div>
+                <div
+                  class="task-detail"
+                  contenteditable="true"
+                  oninput="onDetailEdit(0, this.innerText)">
+                </div>
+              </div>
+            </div>
+          </div>
 
-  <script>
-    const tabs = document.querySelectorAll('.tab');
-    const panels = document.querySelectorAll('main > section');
+          <div class="task-group">
+            <h3 class="task-group-title">today</h3>
 
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        tabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
+            <div class="task-card status-todo">
+              <div class="task-bar"></div>
+              <div class="task-body">
+                <div class="task-title">コイル棚卸し状況確認</div>
+                <div class="task-detail" contenteditable="true"></div>
 
-        panels.forEach(p => p.style.display = 'none');
-        document.getElementById(tab.dataset.tab).style.display = 'block';
-      });
-    });
+                <div class="task-actions">
+                  <button class="btn-carry">Carry</button>
+                  <button class="btn-done">Done</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
-    function saveYaml() {
-      const data = {
-        "2026-01-12": {
-          tasks: [
-            {
-              task: "コイル棚卸し状況確認",
-              status: "planned",
-              detail: "不明な重量エラーの調査",
-              scheduled: "2026-01-12"
-            }
-          ]
-        }
-      };
+        <!-- 入力エリア -->
+        <section class="input-panel">
+          <input
+            type="text"
+            class="task-input"
+            placeholder="新しいタスクを入力"
+          />
+          <button class="add-task-button">Add</button>
+        </section>
+      </section>
 
-      const yaml = jsyaml.dump(data);
-      const blob = new Blob([yaml], { type: "text/yaml" });
-      const url = URL.createObjectURL(blob);
+      <!-- Calendar -->
+      <section class="view view-calendar">
+        <p class="placeholder">Calendar View</p>
+      </section>
 
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "tasks.yaml";
-      a.click();
+      <!-- History -->
+      <section class="view view-history">
+        <p class="placeholder">History View（読み取り専用）</p>
+      </section>
 
-      URL.revokeObjectURL(url);
-    }
-  </script>
-
+      <!-- Settings -->
+      <section class="view view-settings">
+        <label class="setting-item">
+          <input type="checkbox" />
+          ダークモード
+        </label>
+      </section>
+    </main>
+  </div>
 </body>
 </html>

@@ -1,0 +1,241 @@
+/* =========
+   基本設定
+========= */
+
+:root {
+    --bg-main: #f7f8f9;
+    --bg-panel: #ffffff;
+    --text-main: #1a1a1a;
+    --text-sub: #666;
+    --accent-soft: #80f2c0;
+    --accent-done: #e5f0e8;
+    --shadow-soft: 0 1px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-main: #1e1f22;
+      --bg-panel: #2a2b2f;
+      --text-main: #eaeaea;
+      --text-sub: #aaa;
+      --shadow-soft: 0 1px 4px rgba(0, 0, 0, 0.4);
+    }
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-main);
+    color: var(--text-main);
+  }
+  
+  /* =========
+     レイアウト
+  ========= */
+  
+  .app-root {
+    display: flex;
+    min-height: 100vh;
+  }
+  
+  .sidebar {
+    width: 220px;
+    padding: 24px 16px;
+    background: var(--bg-panel);
+    box-shadow: var(--shadow-soft);
+  }
+  
+  .app-title {
+    font-size: 18px;
+    margin-bottom: 24px;
+  }
+  
+  .nav-item {
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+    background: none;
+    border: none;
+    text-align: left;
+    color: var(--text-main);
+    cursor: pointer;
+    border-radius: 6px;
+  }
+  
+  .nav-item.is-active {
+    background: rgba(0, 0, 0, 0.05);
+  }
+  
+  .main {
+    flex: 1;
+    padding: 24px;
+  }
+  
+  /* =========
+     ヘッダー
+  ========= */
+  
+  .main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  
+  .save-button {
+    padding: 8px 16px;
+    border: none;
+    background: var(--bg-panel);
+    box-shadow: var(--shadow-soft);
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  /* =========
+     View
+  ========= */
+  
+  .view {
+    display: none;
+  }
+  
+  .view.is-visible {
+    display: block;
+  }
+  
+  /* =========
+     カレンダー
+  ========= */
+  
+  .calendar-panel {
+    background: var(--bg-panel);
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-soft);
+    margin-bottom: 24px;
+  }
+  
+  .calendar-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .calendar-table th,
+  .calendar-table td {
+    padding: 8px;
+    text-align: center;
+    color: var(--text-sub);
+  }
+  
+  .calendar-table td.is-today {
+    background: rgba(128, 242, 192, 0.3);
+    border-radius: 6px;
+  }
+  
+  /* =========
+     タスク
+  ========= */
+  
+  .task-panel {
+    display: grid;
+    gap: 24px;
+  }
+  
+  .task-group-title {
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: var(--text-sub);
+  }
+  
+  .task-card {
+    display: flex;
+    background: var(--bg-panel);
+    border-radius: 8px;
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
+  }
+  
+  .task-bar {
+    width: 10px;
+    background: transparent;
+  }
+  
+  .status-doing .task-bar,
+  .status-carry .task-bar {
+    background: var(--accent-soft);
+  }
+  
+  .status-done .task-bar {
+    background: var(--accent-done);
+  }
+  
+  .task-body {
+    flex: 1;
+    padding: 12px 16px;
+  }
+  
+  .task-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  
+  .task-detail {
+    font-size: 14px;
+    color: var(--text-sub);
+    min-height: 1.2em;
+  }
+  
+  .task-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+  }
+  
+  .task-actions button {
+    padding: 4px 8px;
+    font-size: 12px;
+    border: none;
+    background: var(--bg-main);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  /* =========
+     入力
+  ========= */
+  
+  .input-panel {
+    margin-top: 24px;
+    display: flex;
+    gap: 8px;
+  }
+  
+  .task-input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    box-shadow: var(--shadow-soft);
+  }
+  
+  .add-task-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background: var(--bg-panel);
+    box-shadow: var(--shadow-soft);
+    cursor: pointer;
+  }
+  
+  /* =========
+     その他
+  ========= */
+  
+  .placeholder {
+    color: var(--text-sub);
+  }
+  
