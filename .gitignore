@@ -1,0 +1,5 @@
+task_log/
+*.yaml
+*.log
+*.json
+*.ini
